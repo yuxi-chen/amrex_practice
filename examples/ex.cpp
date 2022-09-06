@@ -48,5 +48,15 @@ int main(int argc, char* argv[]) {
 
   // Task 9 [optional]: redo Task 8 with multiple processors.
 
+  //=============== Particles =====================
+  // Task 10: Initialize a Particle object. Set particle initial velocity, location and ID. 
+
+  // Task 11: Do NOT use ParticleContainer. Creat a list of Particles with std::vector or std::array or std::list. What is the difference between these three containers? Which do you think is the best for our purpose? 
+
+  // Task 12: Create a ParticleContainer to store particles. Each particle store x,y,z,vx,vy,vz,w and ID, where w is the weight or 'mass' of a particle and it is a real number. Loop through all particles and set initial conditions. 
+
+  // Task 13: update particle locations with the corresponding velocities. 1st order accuracy is good enough. 
+
+
   amrex::Finalize();
 }
