@@ -19,7 +19,10 @@ Skip the 'Adding particle components at runtime', 'Passing particle data into Fo
 1. The memory layout of the Particle and ParticleContainer classes. 
 2. What is the difference between Arrays-of-Structs and Structs-of-Arrays?
 ## Coding tasks. Finish Task 10-13 in ex.cpp
-Requirement: Do NOT copy any code and paste any code from amrex_tutorials or online document. Only keep the code that is necessary and push it to github after finished.  
+Requirement: 
+* Do NOT copy and paste any code from amrex_tutorials or online document. Do NOT even use the same variable names as the tutorials.
+* Do NOT use lambdas, such as AMREX_FOR_1D or ParallelFor. Explicitly use for loops, instead.
+* Only keep the code that is necessary and push it to github after finished.  
 
 ## Read the mover method in FLEKS/src/Particles.cpp. Ignore the numerical details The goal is to understand the particle-mesh interaction operations. 
 
