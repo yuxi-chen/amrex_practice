@@ -1,8 +1,13 @@
 #include "../AMREX/InstallDir/include/AMReX.H"
 #include "../AMREX/InstallDir/include/AMRex_ParallelDescriptor.H"
+#include "../AMREX/InstallDir/include/AMRex_Particles.H"
+#include "../AMREX/InstallDir/include/AMRex_ParticleContainer.H"
+#include "../AMREX/InstallDir/include/AMRex_Vector.H"
 #include <iostream>
 
 #include "ex.h"
+using namespace amrex;
+
 
 int main(int argc, char* argv[]) {
   amrex::Initialize(argc, argv);
@@ -15,12 +20,11 @@ int main(int argc, char* argv[]) {
   // directly copy and paste ANY source code! It will be much useful to TYPE,
   // compile and debug the code.
 
-
-;;;;;
   // Task 0: Compile and run this file. See Makefile
 
   // Task 1: Create an amrex Vector v1.
 
+  Vector<amrex::Real> v1;
   // Task 2: Create a cell based Box bc1, a node based Box bn1. Convert bc1 to a
   // node based box bn2.
 
@@ -52,10 +56,68 @@ int main(int argc, char* argv[]) {
 
   //=============== Particles =====================
   // Task 10: Initialize a Particle object. Set particle initial velocity, location and ID. 
+ Particle<1,1> pp1;
 
   // Task 11: Do NOT use ParticleContainer. Creat a list of Particles with std::vector or std::array or std::list. What is the difference between these three containers? Which do you think is the best for our purpose? 
+  std::vector<amrex::Particle<1,1>> pv1;
+  Particle<1,1> p1;
+  Particle<1,1> p2;
+
+  
+  pv1.push_back(p1);
+  pv1.push_back(p2);
+
+  //... I know what the difference is but cant say for sure which is better. Array wont work if particles are added or removed. List will be faster for adding or removing particles but might be slower when we iterate through the particles.
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
   // Task 12: Create a ParticleContainer to store particles. Each particle store x,y,z,vx,vy,vz,w and ID, where w is the weight or 'mass' of a particle and it is a real number. Loop through all particles and set initial conditions. 
+int n = 64;
+Box domain({1,1,1},{n,n,n});
+RealBox real_box({0.0,0.0,0.0},{1.0,1.0,1.0});
+Geometry geom(domain, real_box, 0, {1,1,1});
+BoxArray ba(domain);
+ba.maxSize(8);
+
+
+DistributionMapping dm {ba};
+
+
+int lev =0;
+
+
+ParticleContainer<1,0> PC(geom,dm,ba);
+
+
+
+auto& particle_tile = PC.GetParticles(lev)[std::make_pair(1,1)];
+
+for (int ii=0; ii<10; ++ii) 
+
+{
+    Particle<1,0> p;
+    p.id()   = ii;
+    p.cpu()  = ParallelDescriptor::MyProc();
+    p.pos(0) = 0.05*ii;
+    p.pos(1) = 0.05*ii;
+    p.pos(2) = 0.05*ii;
+    particle_tile.push_back(p);
+
+}
+
+//Print()<<particle_tile[1];
+
+
+
+
+//Print()<<
+
+
 
   // Task 13: update particle locations with the corresponding velocities. 1st order accuracy is good enough. 
 

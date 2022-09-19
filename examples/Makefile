@@ -4,7 +4,7 @@ default:
 
 # run with 4 processors by default. It can be changed to any number. 
 run:
-	mpiexec -np 4 ./ex.exe
+	mpiexec -np 1 ./ex.exe
 
 clean:
 	rm *.exe *.o
