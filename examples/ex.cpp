@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
   // Task 2: Create a cell based Box bc1, a node based Box bn1. Convert bc1 to a
   // node based box bn2.
 
-  // Task 3: Create a RealBox rb1 /
+  // Task 3: Create a RealBox rb1 //
 
   // Task 4: Create a 3D Gemetry object geom with 16x16x4 cells,
   // xyzmin=[-4,-4,-1], xyzmax=[4,4,1], cartesian grid and periodic in all
