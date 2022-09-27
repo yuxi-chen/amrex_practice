@@ -3,7 +3,8 @@
 #include "../AMREX/InstallDir/include/AMRex_ParticleContainer.H"
 #include "../AMREX/InstallDir/include/AMRex_Particles.H"
 #include "../AMREX/InstallDir/include/AMRex_Vector.H"
-#include <iostream>
+#include "MyVector.h"
+#include <iostream> 
 
 #include "ex.h"
 using namespace amrex;
@@ -14,6 +15,11 @@ int main(int argc, char* argv[]) {
   std::cout << "Number of processors = " << amrex::ParallelDescriptor::NProcs()
             << " rank = " << amrex::ParallelDescriptor::MyProc() << std::endl;
 
+
+
+
+ 
+  //Print()<<aa[1];
   // Best practice: you are encouraged to find useful information from AMREX
   // online document, amrex-tutorials and the AMREX source code. But do not
   // directly copy and paste ANY source code! It will be much useful to TYPE,
@@ -65,9 +71,21 @@ int main(int argc, char* argv[]) {
   Particle<1, 1> p1;
   Particle<1, 1> p2;
 
-  pv1.push_back(p1);
-  pv1.push_back(p2);
+ 
 
+
+  for(int i = 0;i<=10;++i)
+
+  {
+      p1.pos(0)=i;
+      p1.pos(1)=-i;
+
+    pv1.push_back(p1);
+    
+  }
+
+
+  
   //... I know what the difference is but cant say for sure which is better.
   // Array wont work if particles are added or removed. List will be faster for
   // adding or removing particles but might be slower when we iterate through
@@ -76,7 +94,23 @@ int main(int argc, char* argv[]) {
   // Task 11.1: loop through and print location of all particles with the
   // traditional loop: for(int i = 0......)
 
+  for(int i = 0;i<=10;++i)
+
+  {
+      Print()<<std::endl<<"POS:"<<i<<"  ("<<pv1[i].pos(0)<<","<<pv1[i].pos(1)<<")";
+      
+     
+    
+  }
+Print()<<std::endl;
+
   // Task 11.2: do Task 11.1 with vector iterator
+
+  for (auto i : pv1)
+{
+   
+    Print()<<std::endl<<"POS:"<<"  ("<<i.pos(0)<<","<<i.pos(1)<<")";
+}
 
   // Task 11.3: We do not directly use std::vector too much, but it can help us
   // to get familar with c++ containers. The best way to lean vector is to
@@ -86,8 +120,37 @@ int main(int argc, char* argv[]) {
   // 'size' and 'capacity'? 2. What will happen if a vector is already 'full',
   // but push() is still called to add more more elements?
 
+ // std::vector is never full until memory runs out.
+ // The vector I implemented does the same so I do not know what does vector being "full" mean
+
+  
+
+  
+
   // Task 11.4: Implement you own vector class MyClass. See instructions in
   // MyVector.h
+
+
+   vectorClass<int> aa;
+  Print()<<aa.capacity;
+  Print()<<aa.current;
+  aa.push_back(1);
+  Print()<<aa.capacity;
+  Print()<<aa.current;
+  aa.push_back(2);
+  Print()<<aa.capacity;
+  Print()<<aa.current;
+  aa.push_back(3);
+  Print()<<aa.capacity;
+  Print()<<aa.current;
+  aa.push_back(4);
+  Print()<<aa.capacity;
+  Print()<<aa.current;
+  aa.push_back(5);
+  Print()<<aa.capacity;
+  Print()<<aa.current;
+
+  aa.print();
 
   // Task 12: Create a ParticleContainer to store particles. Each particle store
   // x,y,z,vx,vy,vz,w and ID, where w is the weight or 'mass' of a particle and
@@ -118,6 +181,9 @@ int main(int argc, char* argv[]) {
     p.pos(2) = 0.05 * ii;
     particle_tile.push_back(p);
   }
+
+
+  
 
   // Print()<<particle_tile[1];
 
