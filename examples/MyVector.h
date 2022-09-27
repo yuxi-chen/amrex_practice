@@ -1,4 +1,5 @@
 // Step 1: add header guards. What are header guards? Why are they necessary?
+//So same code is not compiled multiple times. Pragma once can also be used
 
 // Step 2: Create an empty template class MyVector. 
 
