@@ -32,3 +32,8 @@ AMREX
 *.exe
 *.out
 *.app
+
+# Other
+Backtrace.*
+
+

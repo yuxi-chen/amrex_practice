@@ -168,7 +168,9 @@ Print()<<std::endl;
 
   ParticleContainer<1, 0> PC(geom, dm, ba);
 
-  auto& particle_tile = PC.GetParticles(lev)[std::make_pair(1, 1)];
+  auto& particle_tiles = PC.GetParticles(lev);//[std::make_pair(1, 1)];
+
+auto& particle_tile=particle_tiles[std::make_pair(1, 1)];
 
   for (int ii = 0; ii < 10; ++ii)
 
