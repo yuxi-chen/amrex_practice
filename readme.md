@@ -26,5 +26,38 @@ Requirement:
 * Do NOT use lambdas, such as AMREX_FOR_1D or ParallelFor. Explicitly use for loops, instead.
 * Only keep the code that is necessary and push it to github after finished.  
 
+## AMREX particle data structure 
+```cpp
+class ArrayOfStructs {
+  ParticleVector m_data;
+}
+
+class StructOfArrays {
+private:
+  std::array<RealVector, NReal> m_rdata;
+  std::array<IntVector, NInt> m_idata;
+}
+
+template <int NStructReal, int NStructInt, int NArrayReal, int NArrayInt,
+          template <class> class Allocator = DefaultAllocator>
+struct ParticleTile {
+  // In FLEKS, we assume tile_size = 1 so far. See FLEKS::Particles.cpp::line31
+  AoS m_aos_tile;
+  SoA m_soa_tile;
+}
+
+class ParticleContainer : public ParticleContainerBase {
+
+  using ParticleTileType =
+      ParticleTile<NStructReal, NStructInt, NArrayReal, NArrayInt, Allocator>;
+
+  //! A single level worth of particles is indexed (grid id, tile id)
+  //! for both SoA and AoS data.
+  using ParticleLevel = std::map<std::pair<int, int>, ParticleTileType>;
+
+private:
+  Vector<ParticleLevel> m_particles;
+}
+```
 ## Read the mover method in FLEKS/src/Particles.cpp. Ignore the numerical details The goal is to understand the particle-mesh interaction operations. 
 
