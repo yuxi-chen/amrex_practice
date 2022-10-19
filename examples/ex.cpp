@@ -3,6 +3,11 @@
 #include "../AMREX/InstallDir/include/AMRex_ParticleContainer.H"
 #include "../AMREX/InstallDir/include/AMRex_Particles.H"
 #include "../AMREX/InstallDir/include/AMRex_Vector.H"
+
+
+
+
+
 #include "MyVector.h"
 #include <iostream> 
 
@@ -168,21 +173,55 @@ Print()<<std::endl;
 
   ParticleContainer<1, 0> PC(geom, dm, ba);
 
-  auto& particle_tiles = PC.GetParticles(lev);//[std::make_pair(1, 1)];
 
-auto& particle_tile=particle_tiles[std::make_pair(1, 1)];
-
-  for (int ii = 0; ii < 10; ++ii)
+const int grid_id = 1;//pti.index();
+const int tile_id = 1;//pti.LocalTileIndex();
+auto& particle_tiles = PC.GetParticles(lev);//[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
+auto& particle_tile=particle_tiles[std::make_pair(grid_id,tile_id)]; // - This is a ParticleTile
+ for (int ii = 0; ii < 20; ++ii)
 
   {
     Particle<1, 0> p;
     p.id() = ii;
     p.cpu() = ParallelDescriptor::MyProc();
-    p.pos(0) = 0.05 * ii;
-    p.pos(1) = 0.05 * ii;
-    p.pos(2) = 0.05 * ii;
-    particle_tile.push_back(p);
+    p.pos(0) = 5+(0.05 * ii);
+    p.pos(1) =5+ 0.05 * ii;
+    p.pos(2) =5+ 0.05 * ii;
+    particle_tile.push_back(p);  //- ParticleTile has pushback function
   }
+
+
+auto& particles = particle_tile.GetArrayOfStructs();  // Returns AOS
+const int np = particles.numParticles();  // Defined in AOS
+//PC.Redistribute();
+
+
+Print()<<np<<std::endl;
+for(int iii=0; iii<np;++iii)
+
+{
+
+
+Print()<<std::endl; 
+Print()<< particles[iii].pos(0)<<','<<particles[iii].pos(1)<<','<<particles[iii].pos(2);
+
+
+
+
+
+Print()<<std::endl; 
+
+}
+
+//ParticleVector is PODvector??
+//PODVector<ParticleType, Allocator<ParticleType> >;
+
+
+
+
+
+
+ 
 
 
   
