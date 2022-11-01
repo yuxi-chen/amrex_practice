@@ -4,12 +4,8 @@
 #include "../AMREX/InstallDir/include/AMRex_Particles.H"
 #include "../AMREX/InstallDir/include/AMRex_Vector.H"
 
-
-
-
-
 #include "MyVector.h"
-#include <iostream> 
+#include <iostream>
 
 #include "ex.h"
 using namespace amrex;
@@ -20,15 +16,11 @@ int main(int argc, char* argv[]) {
   std::cout << "Number of processors = " << amrex::ParallelDescriptor::NProcs()
             << " rank = " << amrex::ParallelDescriptor::MyProc() << std::endl;
 
-
-
-
- 
-  //Print()<<aa[1];
-  // Best practice: you are encouraged to find useful information from AMREX
-  // online document, amrex-tutorials and the AMREX source code. But do not
-  // directly copy and paste ANY source code! It will be much useful to TYPE,
-  // compile and debug the code.
+  // Print()<<aa[1];
+  //  Best practice: you are encouraged to find useful information from AMREX
+  //  online document, amrex-tutorials and the AMREX source code. But do not
+  //  directly copy and paste ANY source code! It will be much useful to TYPE,
+  //  compile and debug the code.
 
   // Task 0: Compile and run this file. See Makefile
 
@@ -76,21 +68,15 @@ int main(int argc, char* argv[]) {
   Particle<1, 1> p1;
   Particle<1, 1> p2;
 
- 
-
-
-  for(int i = 0;i<=10;++i)
+  for (int i = 0; i <= 10; ++i)
 
   {
-      p1.pos(0)=i;
-      p1.pos(1)=-i;
+    p1.pos(0) = i;
+    p1.pos(1) = -i;
 
     pv1.push_back(p1);
-    
   }
 
-
-  
   //... I know what the difference is but cant say for sure which is better.
   // Array wont work if particles are added or removed. List will be faster for
   // adding or removing particles but might be slower when we iterate through
@@ -99,23 +85,23 @@ int main(int argc, char* argv[]) {
   // Task 11.1: loop through and print location of all particles with the
   // traditional loop: for(int i = 0......)
 
-  for(int i = 0;i<=10;++i)
+  for (int i = 0; i <= 10; ++i)
 
   {
-      Print()<<std::endl<<"POS:"<<i<<"  ("<<pv1[i].pos(0)<<","<<pv1[i].pos(1)<<")";
-      
-     
-    
+    Print() << std::endl
+            << "POS:" << i << "  (" << pv1[i].pos(0) << "," << pv1[i].pos(1)
+            << ")";
   }
-Print()<<std::endl;
+  Print() << std::endl;
 
   // Task 11.2: do Task 11.1 with vector iterator
 
-  for (auto i : pv1)
-{
-   
-    Print()<<std::endl<<"POS:"<<"  ("<<i.pos(0)<<","<<i.pos(1)<<")";
-}
+  for (auto i : pv1) {
+
+    Print() << std::endl
+            << "POS:"
+            << "  (" << i.pos(0) << "," << i.pos(1) << ")";
+  }
 
   // Task 11.3: We do not directly use std::vector too much, but it can help us
   // to get familar with c++ containers. The best way to lean vector is to
@@ -125,35 +111,31 @@ Print()<<std::endl;
   // 'size' and 'capacity'? 2. What will happen if a vector is already 'full',
   // but push() is still called to add more more elements?
 
- // std::vector is never full until memory runs out.
- // The vector I implemented does the same so I do not know what does vector being "full" mean
-
-  
-
-  
+  // std::vector is never full until memory runs out.
+  // The vector I implemented does the same so I do not know what does vector
+  // being "full" mean
 
   // Task 11.4: Implement you own vector class MyClass. See instructions in
   // MyVector.h
 
-
-   vectorClass<int> aa;
-  Print()<<aa.capacity;
-  Print()<<aa.current;
+  vectorClass<int> aa;
+  Print() << aa.capacity;
+  Print() << aa.current;
   aa.push_back(1);
-  Print()<<aa.capacity;
-  Print()<<aa.current;
+  Print() << aa.capacity;
+  Print() << aa.current;
   aa.push_back(2);
-  Print()<<aa.capacity;
-  Print()<<aa.current;
+  Print() << aa.capacity;
+  Print() << aa.current;
   aa.push_back(3);
-  Print()<<aa.capacity;
-  Print()<<aa.current;
+  Print() << aa.capacity;
+  Print() << aa.current;
   aa.push_back(4);
-  Print()<<aa.capacity;
-  Print()<<aa.current;
+  Print() << aa.capacity;
+  Print() << aa.current;
   aa.push_back(5);
-  Print()<<aa.capacity;
-  Print()<<aa.current;
+  Print() << aa.capacity;
+  Print() << aa.current;
 
   aa.print();
 
@@ -163,108 +145,77 @@ Print()<<std::endl;
   int n = 4;
   Box domain({ 1, 1, 1 }, { n, n, n });
   RealBox real_box({ 0.0, 0.0, 0.0 }, { 4.0, 4.0, 4.0 });
-  
+
   Geometry geom(domain, real_box, 0, { 1, 1, 1 });
   BoxArray ba(domain);
   ba.maxSize(2);
- 
 
-DistributionMapping dm{ ba };
- MultiFab mf(ba, dm, 1, 1);
+  DistributionMapping dm{ ba };
+  MultiFab mf(ba, dm, 1, 1);
   int lev = 0;
 
+  ParticleContainer<1, 0> PC1(geom, dm, ba);
+  auto& particle_tiles1 = PC1.GetParticles(
+      lev); //[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
+  int tnp = 0; // - This is a ParticleTile
 
+  for (MFIter mfi(mf); mfi.isValid(); ++mfi) {
 
- ParticleContainer<1, 0> PC1(geom, dm, ba);
-auto& particle_tiles1 = PC1.GetParticles(lev);//[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
-int tnp=0; // - This is a ParticleTile
+    auto& particle_tile1 =
+        particle_tiles1[std::make_pair(mfi.index(), mfi.LocalTileIndex())];
 
-for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
-{
-
-auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),mfi.LocalTileIndex())];
-
-  const Box& bx = mfi.validbox();
+    const Box& bx = mfi.validbox();
 
     FArrayBox& fab = mf[mfi];
 
     Array4<Real> const& a = fab.array();
 
-     const auto lo = lbound(bx);
-   const auto hi = ubound(bx);
-  
+    const auto lo = lbound(bx);
+    const auto hi = ubound(bx);
 
- for   (int k = lo.z; k <= hi.z; ++k) {
-       for (int j = lo.x; j <= hi.x; ++j) {
+    for (int k = lo.z; k <= hi.z; ++k) {
+      for (int j = lo.x; j <= hi.x; ++j) {
         for (int i = lo.x; i <= hi.x; ++i) {
 
+          tnp = tnp + 1;
+          Particle<1, 0> p;
+          p.id() = tnp;
+          p.cpu() = ParallelDescriptor::MyProc();
+          p.pos(0) = i - 0.5;
+          p.pos(1) = j - 0.5;
+          p.pos(2) = k - 0.5;
+          particle_tile1.push_back(p);
+        }
+      }
+    }
+  }
 
- 
+  // PC1.Redistribute();
 
-    tnp=tnp+1;
-    Particle<1, 0> p;
-    p.id() = tnp;
-    p.cpu() = ParallelDescriptor::MyProc();
-    p.pos(0) = i-0.5;
-    p.pos(1) =j-0.5;
-    p.pos(2) =k-0.5;
-    particle_tile1.push_back(p);
+  for (MFIter mfi(mf); mfi.isValid(); ++mfi) {
 
- }
-
-       }
-   }
-
-
-}
-
-//PC1.Redistribute();
-
-
-for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
-{
-
-auto& particle_tile1= PC1.GetParticles(lev)[std::make_pair(mfi.index(),mfi.LocalTileIndex())];
-auto& particles1 = particle_tile1.GetArrayOfStructs();
-  const Box& bx = mfi.validbox();
+    auto& particle_tile1 = PC1.GetParticles(
+        lev)[std::make_pair(mfi.index(), mfi.LocalTileIndex())];
+    auto& particles1 = particle_tile1.GetArrayOfStructs();
+    const Box& bx = mfi.validbox();
 
     FArrayBox& fab = mf[mfi];
 
     Array4<Real> const& a = fab.array();
 
-     const auto lo = lbound(bx);
-   const auto hi = ubound(bx);
+    const auto lo = lbound(bx);
+    const auto hi = ubound(bx);
 
+    {
 
+      Print() << std::endl;
+      Print() << particles1.numParticles();
+      Print() << std::endl;
+    }
+  }
 
-
-
-{
-
-Print()<<std::endl;
-Print ()<<particles1.numParticles();
-Print()<<std::endl;
-
-
-}
-
-
-
-}
-
-
-//ParticleVector is PODvector??
-//PODVector<ParticleType, Allocator<ParticleType> >;
-
-
-
-
-
-
- 
-
-
-  
+  // ParticleVector is PODvector??
+  // PODVector<ParticleType, Allocator<ParticleType> >;
 
   // Print()<<particle_tile[1];
 
