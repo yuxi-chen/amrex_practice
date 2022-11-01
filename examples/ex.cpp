@@ -166,9 +166,10 @@ Print()<<std::endl;
   Geometry geom(domain, real_box, 0, { 1, 1, 1 });
   BoxArray ba(domain);
   ba.maxSize(8);
+ 
 
   DistributionMapping dm{ ba };
-
+ MultiFab mf(ba, dm, 1, 1);
   int lev = 0;
 
   ParticleContainer<1, 0> PC(geom, dm, ba);
@@ -212,6 +213,104 @@ Print()<< particles[iii].pos(0)<<','<<particles[iii].pos(1)<<','<<particles[iii]
 Print()<<std::endl; 
 
 }
+
+
+for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
+{
+    
+    const Box& bx = mfi.validbox();
+
+    FArrayBox& fab = mf[mfi];
+
+    Array4<Real> const& a = fab.array();
+
+   const auto lo = lbound(bx);
+   const auto hi = ubound(bx);
+ 
+     for   (int j = lo.y; j <= hi.y; ++j) {
+       for (int i = lo.x; i <= hi.x; ++i) {
+         
+          a(i,j,0)=i+j;
+
+       
+     }
+   }
+
+}
+
+ ParticleContainer<1, 0> PC1(geom, dm, ba);
+ auto& particle_tiles1 = PC.GetParticles(lev);//[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
+int tnp=0; // - This is a ParticleTile
+
+for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
+{
+
+auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),1)];
+
+  const Box& bx = mfi.validbox();
+
+    FArrayBox& fab = mf[mfi];
+
+    Array4<Real> const& a = fab.array();
+
+     const auto lo = lbound(bx);
+   const auto hi = ubound(bx);
+
+ for   (int j = lo.y; j <= hi.y; ++j) {
+       for (int i = lo.x; i <= hi.x; ++i) {
+
+
+ 
+
+    tnp=tnp+1;
+    Particle<1, 0> p;
+    p.id() = tnp;
+    p.cpu() = ParallelDescriptor::MyProc();
+    p.pos(0) = i;
+    p.pos(1) =j;
+    particle_tile1.push_back(p);
+
+ }
+   }
+
+
+}
+
+
+
+for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
+{
+
+auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),1)];
+  const Box& bx = mfi.validbox();
+
+    FArrayBox& fab = mf[mfi];
+
+    Array4<Real> const& a = fab.array();
+
+     const auto lo = lbound(bx);
+   const auto hi = ubound(bx);
+
+np
+   {
+
+
+   }
+
+ for   (int j = lo.y; j <= hi.y; ++j) {
+       for (int i = lo.x; i <= hi.x; ++i) {
+
+
+ p.pos(0)=mf(i,j,0)
+
+
+
+ }
+   }
+
+
+}
+
 
 //ParticleVector is PODvector??
 //PODVector<ParticleType, Allocator<ParticleType> >;
