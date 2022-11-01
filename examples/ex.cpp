@@ -185,12 +185,15 @@ int main(int argc, char* argv[]) {
           p.pos(1) = j - 0.5;
           p.pos(2) = k - 0.5;
           particle_tile1.push_back(p);
+
+          Print() << "particle = " << p << "\n";
         }
       }
     }
   }
 
-  // PC1.Redistribute();
+  PC1.Redistribute();
+
 
   for (MFIter mfi(mf); mfi.isValid(); ++mfi) {
 
