@@ -160,92 +160,29 @@ Print()<<std::endl;
   // Task 12: Create a ParticleContainer to store particles. Each particle store
   // x,y,z,vx,vy,vz,w and ID, where w is the weight or 'mass' of a particle and
   // it is a real number. Loop through all particles and set initial conditions.
-  int n = 64;
+  int n = 4;
   Box domain({ 1, 1, 1 }, { n, n, n });
-  RealBox real_box({ 0.0, 0.0, 0.0 }, { 1.0, 1.0, 1.0 });
+  RealBox real_box({ 0.0, 0.0, 0.0 }, { 4.0, 4.0, 4.0 });
+  
   Geometry geom(domain, real_box, 0, { 1, 1, 1 });
   BoxArray ba(domain);
-  ba.maxSize(8);
+  ba.maxSize(2);
  
 
-  DistributionMapping dm{ ba };
+DistributionMapping dm{ ba };
  MultiFab mf(ba, dm, 1, 1);
   int lev = 0;
 
-  ParticleContainer<1, 0> PC(geom, dm, ba);
 
-
-const int grid_id = 1;//pti.index();
-const int tile_id = 1;//pti.LocalTileIndex();
-auto& particle_tiles = PC.GetParticles(lev);//[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
-auto& particle_tile=particle_tiles[std::make_pair(grid_id,tile_id)]; // - This is a ParticleTile
- for (int ii = 0; ii < 20; ++ii)
-
-  {
-    Particle<1, 0> p;
-    p.id() = ii;
-    p.cpu() = ParallelDescriptor::MyProc();
-    p.pos(0) = 5+(0.05 * ii);
-    p.pos(1) =5+ 0.05 * ii;
-    p.pos(2) =5+ 0.05 * ii;
-    particle_tile.push_back(p);  //- ParticleTile has pushback function
-  }
-
-
-auto& particles = particle_tile.GetArrayOfStructs();  // Returns AOS
-const int np = particles.numParticles();  // Defined in AOS
-//PC.Redistribute();
-
-
-Print()<<np<<std::endl;
-for(int iii=0; iii<np;++iii)
-
-{
-
-
-Print()<<std::endl; 
-Print()<< particles[iii].pos(0)<<','<<particles[iii].pos(1)<<','<<particles[iii].pos(2);
-
-
-
-
-
-Print()<<std::endl; 
-
-}
-
-
-for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
-{
-    
-    const Box& bx = mfi.validbox();
-
-    FArrayBox& fab = mf[mfi];
-
-    Array4<Real> const& a = fab.array();
-
-   const auto lo = lbound(bx);
-   const auto hi = ubound(bx);
- 
-     for   (int j = lo.y; j <= hi.y; ++j) {
-       for (int i = lo.x; i <= hi.x; ++i) {
-         
-          a(i,j,0)=i+j;
-
-       
-     }
-   }
-
-}
 
  ParticleContainer<1, 0> PC1(geom, dm, ba);
- auto& particle_tiles1 = PC.GetParticles(lev);//[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
+auto& particle_tiles1 = PC1.GetParticles(lev);//[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
 int tnp=0; // - This is a ParticleTile
 
 for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
 {
 
-auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),1)];
+auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),mfi.LocalTileIndex())];
 
   const Box& bx = mfi.validbox();
 
@@ -255,9 +192,11 @@ auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),1)];
 
      const auto lo = lbound(bx);
    const auto hi = ubound(bx);
+  
 
- for   (int j = lo.y; j <= hi.y; ++j) {
-       for (int i = lo.x; i <= hi.x; ++i) {
+ for   (int k = lo.z; k <= hi.z; ++k) {
+       for (int j = lo.x; j <= hi.x; ++j) {
+        for (int i = lo.x; i <= hi.x; ++i) {
 
 
  
@@ -266,22 +205,27 @@ auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),1)];
     Particle<1, 0> p;
     p.id() = tnp;
     p.cpu() = ParallelDescriptor::MyProc();
-    p.pos(0) = i;
-    p.pos(1) =j;
+    p.pos(0) = i-0.5;
+    p.pos(1) =j-0.5;
+    p.pos(2) =k-0.5;
     particle_tile1.push_back(p);
 
  }
+
+       }
    }
 
 
 }
 
+//PC1.Redistribute();
 
 
 for (MFIter mfi(mf); mfi.isValid(); ++mfi) 
 {
 
-auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),1)];
+auto& particle_tile1= PC1.GetParticles(lev)[std::make_pair(mfi.index(),mfi.LocalTileIndex())];
+auto& particles1 = particle_tile1.GetArrayOfStructs();
   const Box& bx = mfi.validbox();
 
     FArrayBox& fab = mf[mfi];
@@ -291,22 +235,19 @@ auto& particle_tile1=particle_tiles1[std::make_pair(mfi.index(),1)];
      const auto lo = lbound(bx);
    const auto hi = ubound(bx);
 
-np
-   {
-
-
-   }
-
- for   (int j = lo.y; j <= hi.y; ++j) {
-       for (int i = lo.x; i <= hi.x; ++i) {
-
-
- p.pos(0)=mf(i,j,0)
 
 
 
- }
-   }
+
+{
+
+Print()<<std::endl;
+Print ()<<particles1.numParticles();
+Print()<<std::endl;
+
+
+}
+
 
 
 }
