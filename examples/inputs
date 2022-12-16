@@ -1,0 +1,35 @@
+
+geometry.prob_lo     =  0.0  0.0  0.0 
+geometry.prob_hi     =  1.0  1.0  1.0
+geometry.is_periodic =  1    1    1
+
+
+amr.n_cell          = 32 32
+amr.max_level       = 1        # Actual levels are max_level+1
+amr.max_grid_size   = 4                           
+
+amr.ref_ratio       = 2 2 
+
+amr.blocking_factor_x = 2
+amr.blocking_factor_y = 2
+amr.blocking_factor_z = 2
+
+
+###*****************************************************************
+
+time_step = 0.01
+stop_time = 10.0
+
+
+
+nghost = 1
+ncomp  = 1
+
+
+phierr = 1.01 1.1  1.5
+
+dt = 0.00001
+
+tag = 1
+steps = 300
+steps1 = 2
