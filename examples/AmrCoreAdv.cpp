@@ -54,7 +54,7 @@ void AmrCoreAdv::MakeNewLevelFromScratch(int lev, Real time, const BoxArray &ba,
                 for (int i = lo.x; i <= hi.x; ++i)
                 {
                     Real x = problo[0] + (0.5 + i) * dx[0];
-                    Real r2 = (std::pow(x - 0.5, 2) + std::pow((y - 0.5), 2)) / 0.01;
+                    Real r2 = (std::pow(x - 0.75, 2) + std::pow((y - 0.5), 2)) / 0.01;
                     fab(i, j, k) = 1.0 + std::exp(-r2);
                 }
             }
