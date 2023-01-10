@@ -145,6 +145,10 @@ void AmrCoreAdv::Evolve()
     MultiFab &state2 = phi_old[ii];
     const auto problo = Geom(ii).ProbLoArray();
     const auto dx = Geom(ii).CellSizeArray();
+
+
+
+
     for (MFIter mfi(state); mfi.isValid(); ++mfi)
     {
         Array4<Real> fab = state[mfi].array();
@@ -181,28 +185,18 @@ void AmrCoreAdv::Evolve()
 
 void AmrCoreAdv::setBC1()
 {
-    MultiFab Sborder(grids[1], dmap[1], phi_new[1].nComp(), 1); 
+     
     FillPatch(1, 0.0, phi_new[1], 0, phi_new[1].nComp());
     phi_new[1].FillBoundary();
 }
 void AmrCoreAdv::FillPatch(int lev, Real time, MultiFab &mf, int icomp, int ncomp)
 {
-    // if (lev == 0)
-    // {
-    //     Vector<MultiFab *> smf;
-    //     Vector<Real> stime;
-    //     GetData(0, time, smf, stime);
-    //     CpuBndryFuncFab bndry_func(nullptr); // Without EXT_DIR, we can pass a nullptr.
-    //     PhysBCFunct<CpuBndryFuncFab> physbc(geom[lev], bcs, bndry_func);
-    //     amrex::FillPatchSingleLevel(mf, time, smf, stime, 0, icomp, ncomp,
-    //                                 geom[lev], physbc, 0);
-    // }
-    // else
+   
     {
 
         
         Vector<MultiFab *> cmf, fmf;
-        Vector<Real> ctime, ftime,cc,ff;
+        Vector<Real> ctime, ftime;
         cmf.push_back(&phi_new[0]);
         fmf.push_back(&phi_new[1]);
         
@@ -212,7 +206,7 @@ void AmrCoreAdv::FillPatch(int lev, Real time, MultiFab &mf, int icomp, int ncom
         PhysBCFunct<CpuBndryFuncFab> fphysbc(geom[lev], bcs, bndry_func);
         
     
-        amrex::FillPatchTwoLevels(mf, time, cmf, cc, fmf, ff,
+        amrex::FillPatchTwoLevels(mf, 0.0, cmf, ctime, fmf, ftime,
                                   0, icomp, ncomp, geom[lev - 1], geom[lev],
                                   cphysbc, 0, fphysbc, 0, refRatio(lev - 1),
                                   mapper, bcs, 0);
