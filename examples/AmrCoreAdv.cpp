@@ -27,7 +27,7 @@ void AmrCoreAdv::MakeNewLevelFromScratch(int lev, Real time, const BoxArray &ba,
     MultiFab &state = phi_new[lev];
     const auto problo = Geom(lev).ProbLoArray();
     const auto dx = Geom(lev).CellSizeArray();
-    for (MFIter mfi(state, TilingIfNotGPU()); mfi.isValid(); ++mfi)
+    for (MFIter mfi(state); mfi.isValid(); ++mfi)
     {
         Array4<Real> fab = state[mfi].array();
         const Box &box = mfi.tilebox();
@@ -134,12 +134,17 @@ void AmrCoreAdv::AverageDown()
                             0, phi_new[lev].nComp(), refRatio(lev));
     }
 }
-void AmrCoreAdv::Evolve0()
+void AmrCoreAdv::Evolve() 
 {
-    MultiFab &state = phi_new[0];
-    MultiFab &state2 = phi_old[0];
-    const auto problo = Geom(0).ProbLoArray();
-    const auto dx = Geom(0).CellSizeArray();
+    
+    for (int ii=0; ii<2; ++ii)
+
+    {
+
+    MultiFab &state = phi_new[ii];
+    MultiFab &state2 = phi_old[ii];
+    const auto problo = Geom(ii).ProbLoArray();
+    const auto dx = Geom(ii).CellSizeArray();
     for (MFIter mfi(state); mfi.isValid(); ++mfi)
     {
         Array4<Real> fab = state[mfi].array();
@@ -168,97 +173,48 @@ void AmrCoreAdv::Evolve0()
             }
         }
     }
-}
 
-void AmrCoreAdv::Evolve1()
-{
-    MultiFab &state = phi_new[1];
-    MultiFab &state2 = phi_old[1];
-    const auto problo = Geom(1).ProbLoArray();
-    const auto dx = Geom(1).CellSizeArray();
-    for (MFIter mfi(state); mfi.isValid(); ++mfi)
-    {
-        Array4<Real> fab = state[mfi].array();
-        Array4<Real> fab2 = state2[mfi].array();
-        const Box &box = mfi.tilebox();
-        const auto lo = lbound(box);
-        const auto hi = ubound(box);
-        for (int k = lo.z; k <= hi.z; ++k)
-        {
-            for (int j = lo.y; j <= hi.y; ++j)
-            {
-                for (int i = lo.x; i <= hi.x; ++i)
-                {
-                    fab2(i, j, k) = dt * (fab(i - 1, j, k) - 2 * fab(i, j, k) + fab(i + 1, j, k) + fab(i, j - 1, k) - 2 * fab(i, j, k) + fab(i, j + 1, k)) / (dx[0] * dx[0]);
-                }
-            }
-        }
-        for (int k = lo.z; k <= hi.z; ++k)
-        {
-            for (int j = lo.y; j <= hi.y; ++j)
-            {
-                for (int i = lo.x; i <= hi.x; ++i)
-                {
-                    fab(i, j, k) = fab2(i, j, k) + fab(i, j, k);
-                }
-            }
-        }
+
     }
 }
+
+
 void AmrCoreAdv::setBC1()
 {
-    MultiFab Sborder(grids[1], dmap[1], phi_new[1].nComp(), 1);
-    FillPatch(1, 0.0, phi_new[1], 0, Sborder.nComp());
+    MultiFab Sborder(grids[1], dmap[1], phi_new[1].nComp(), 1); 
+    FillPatch(1, 0.0, phi_new[1], 0, phi_new[1].nComp());
     phi_new[1].FillBoundary();
 }
 void AmrCoreAdv::FillPatch(int lev, Real time, MultiFab &mf, int icomp, int ncomp)
 {
-    if (lev == 0)
+    // if (lev == 0)
+    // {
+    //     Vector<MultiFab *> smf;
+    //     Vector<Real> stime;
+    //     GetData(0, time, smf, stime);
+    //     CpuBndryFuncFab bndry_func(nullptr); // Without EXT_DIR, we can pass a nullptr.
+    //     PhysBCFunct<CpuBndryFuncFab> physbc(geom[lev], bcs, bndry_func);
+    //     amrex::FillPatchSingleLevel(mf, time, smf, stime, 0, icomp, ncomp,
+    //                                 geom[lev], physbc, 0);
+    // }
+    // else
     {
-        Vector<MultiFab *> smf;
-        Vector<Real> stime;
-        GetData(0, time, smf, stime);
-        CpuBndryFuncFab bndry_func(nullptr); // Without EXT_DIR, we can pass a nullptr.
-        PhysBCFunct<CpuBndryFuncFab> physbc(geom[lev], bcs, bndry_func);
-        amrex::FillPatchSingleLevel(mf, time, smf, stime, 0, icomp, ncomp,
-                                    geom[lev], physbc, 0);
-    }
-    else
-    {
+
+        
         Vector<MultiFab *> cmf, fmf;
-        Vector<Real> ctime, ftime;
-        GetData(lev - 1, time, cmf, ctime);
-        GetData(lev, time, fmf, ftime);
+        Vector<Real> ctime, ftime,cc,ff;
+        cmf.push_back(&phi_new[0]);
+        fmf.push_back(&phi_new[1]);
+        
         Interpolater *mapper = &cell_cons_interp;
         CpuBndryFuncFab bndry_func(nullptr); // Without EXT_DIR, we can pass a nullptr.
         PhysBCFunct<CpuBndryFuncFab> cphysbc(geom[lev - 1], bcs, bndry_func);
         PhysBCFunct<CpuBndryFuncFab> fphysbc(geom[lev], bcs, bndry_func);
-        amrex::FillPatchTwoLevels(mf, time, cmf, ctime, fmf, ftime,
+        
+    
+        amrex::FillPatchTwoLevels(mf, time, cmf, cc, fmf, ff,
                                   0, icomp, ncomp, geom[lev - 1], geom[lev],
                                   cphysbc, 0, fphysbc, 0, refRatio(lev - 1),
                                   mapper, bcs, 0);
-    }
-}
-void AmrCoreAdv::GetData(int lev, Real time, Vector<MultiFab *> &data, Vector<Real> &datatime)
-{
-    data.clear();
-    datatime.clear();
-    const Real teps = (t_new[lev] - t_old[lev]) * 1.e-3;
-    if (time > t_new[lev] - teps && time < t_new[lev] + teps)
-    {
-        data.push_back(&phi_new[lev]);
-        datatime.push_back(t_new[lev]);
-    }
-    else if (time > t_old[lev] - teps && time < t_old[lev] + teps)
-    {
-        data.push_back(&phi_old[lev]);
-        datatime.push_back(t_old[lev]);
-    }
-    else
-    {
-        data.push_back(&phi_old[lev]);
-        data.push_back(&phi_new[lev]);
-        datatime.push_back(t_old[lev]);
-        datatime.push_back(t_new[lev]);
     }
 }

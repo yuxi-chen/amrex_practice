@@ -47,8 +47,7 @@ public:
     void setBC0() {phi_new[0].FillBoundary(geom[0].periodicity());}
     void setBC1();
     void FillPatch (int lev, amrex::Real time, amrex::MultiFab& mf, int icomp, int ncomp);
-    void GetData (int lev, amrex::Real time, amrex::Vector<amrex::MultiFab*>& data,
-                  amrex::Vector<amrex::Real>& datatime);
+    
 
    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,8 +78,8 @@ public:
     // write plotfile to disk
     void WritePlotFile () const;
     void AverageDown ();
-    void Evolve0 ();
-    void Evolve1 ();
+    void Evolve ();
+   
     amrex::Vector<int> istep; 
     
 private:
