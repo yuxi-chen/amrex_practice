@@ -35,5 +35,5 @@ AMREX
 
 # Other
 Backtrace.*
-
+*.DS_store
 
