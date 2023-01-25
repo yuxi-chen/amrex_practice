@@ -8,7 +8,13 @@
 #include <AMReX_PlotFileUtil.H>
 #include <AMReX_VisMF.H>
 using namespace amrex;
-AmrCoreAdv::AmrCoreAdv() {}
+AmrCoreAdv::AmrCoreAdv() {
+  nSpecies = 1;
+  for (int i = 0; i < nSpecies; i++) {
+    pts.push_back(Particles(this));
+  }
+}
+
 AmrCoreAdv::~AmrCoreAdv() {}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void AmrCoreAdv::MakeNewLevelFromScratch(int lev, Real time, const BoxArray &ba,
