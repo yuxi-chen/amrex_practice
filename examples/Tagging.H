@@ -22,11 +22,21 @@ state_error (int i, int j, int k,
     //     tag(i,j,k) = tagn;
     // }
 
-       if(i>8&&i<23)
+    int tagn;
+    amrex::ParmParse pp; 
+   pp.query("tag", tagn);
+
+       if(i>=3&&i<=4)
        {
-        if(j>8&&j<23)
+        if(j>=3&&j<=4)
         {
-           tag(i,j,k) = tagval;
+
+         
+
+           tag(i,j,k) = tagn;
+
+
+        
         }
 
         }
