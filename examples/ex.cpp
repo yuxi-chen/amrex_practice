@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
     {
         core.setBC0();
         core.setBC1();
-        core.Evolve0();
-        core.Evolve1();
+        core.Evolve();
+        
         core.AverageDown();
     }
     core.WritePlotFile();

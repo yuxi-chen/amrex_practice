@@ -31,5 +31,4 @@ phierr = 1.01 1.1  1.5
 dt = 0.00001
 
 tag = 1
-steps = 10
-steps1 = 2
+steps = 1000

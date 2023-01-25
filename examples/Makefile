@@ -1,6 +1,6 @@
 default: 
-	mpicxx  -I../AMREX/InstallDir/include -c ex.cpp -o ex.o
-	mpicxx  -I../AMREX/InstallDir/include -c AmrCoreAdv.cpp -o AmrCoreAdv.o
+	mpicxx  -I../AMREX/InstallDir/include -c -g -O0 ex.cpp -o ex.o
+	mpicxx  -I../AMREX/InstallDir/include -c -g -O0 AmrCoreAdv.cpp -o AmrCoreAdv.o
 
 	mpif90 -o ex.exe ex.o AmrCoreAdv.o -L../AMREX/InstallDir/lib -lamrex  -lstdc++ -lmpi_cxx
 
