@@ -199,6 +199,8 @@ void AmrCoreAdv::FillPatch(int lev, Real time, MultiFab &mf, int icomp, int ncom
         Vector<Real> ctime, ftime;
         cmf.push_back(&phi_new[0]);
         fmf.push_back(&phi_new[1]);
+        ctime.push_back(0.0);
+        ftime.push_back(0.0);
         
         Interpolater *mapper = &cell_cons_interp;
         CpuBndryFuncFab bndry_func(nullptr); // Without EXT_DIR, we can pass a nullptr.
