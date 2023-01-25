@@ -178,7 +178,7 @@ Print() << "________________ "<< "\n"<<"\n";
 
 {
         Print() << std::endl;
-        particles1[0].pos(0)=0.5;
+        particles1[0].pos(0)=7.5;
         particles1[0].pos(1)=0.5;
         Print() << std::endl;
       }
