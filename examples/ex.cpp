@@ -2,6 +2,7 @@
 #include "../AMREX/InstallDir/include/AMRex_ParallelDescriptor.H"
 #include "../AMREX/InstallDir/include/AMRex_ParticleContainer.H"
 #include "../AMREX/InstallDir/include/AMRex_Particles.H"
+#include "../AMREX/InstallDir/include/AMRex_AmrParticles.H"
 #include "../AMREX/InstallDir/include/AMRex_Vector.H"
 #include "MyVector.h"
 #include <iostream>
@@ -60,11 +61,169 @@ int main(int argc, char *argv[])
     {
         core.setBC0();
         core.setBC1();
-        core.Evolve();
+        //core.Evolve();
         
-        core.AverageDown();
+        //core.AverageDown();
     }
     core.WritePlotFile();
+
+   
+    Print() << "________________ "<< "\n"<<"\n";
+    Print() << "particles initiated " << "\n";
+    Print() << "________________ " << "\n";
+
+
+   AmrParticleContainer<1, 0> PC1(&core);
+
+auto& particle_tiles1 = PC1.GetParticles(0); //[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
+    int tnp = 0; // - This is a ParticleTile
+    for (MFIter mfi(core.phi_new[0]); mfi.isValid(); ++mfi)
+     {
+      auto& particle_tile1 =particle_tiles1[std::make_pair(mfi.index(), 0)];
+      const Box& bx = mfi.validbox();
+      FArrayBox& fab = core.phi_new[0][mfi];
+      Array4<Real> const& a = fab.array();
+      const auto lo = lbound(bx);
+      const auto hi = ubound(bx);
+      for (int k = lo.z; k <= hi.z; ++k) {
+        for (int j = lo.y; j <= hi.y; ++j) {
+          for (int i = lo.x; i <= hi.x; ++i) {
+            tnp = tnp + 1;
+            Particle<1, 0> p;
+            p.id() = tnp;
+            p.cpu() = ParallelDescriptor::MyProc();
+            p.pos(0) = i + 0.5;
+            p.pos(1) = j + 0.5;
+            p.pos(2) = 0;
+            particle_tile1.push_back(p);
+            Print() << "particle = " << p << "\n";
+          }
+        }
+      }
+    }
+
+    
+
+Print() << "________________ "<< "\n"<<"\n";
+    Print() << "particles checked once w/o Redistribute " << "\n";
+    Print() << "________________ " << "\n";
+
+    for (MFIter mfi(core.phi_new[0]); mfi.isValid(); ++mfi) {
+      auto& particle_tile1 = PC1.GetParticles(0)[std::make_pair(mfi.index(), 0)];
+      auto& particles1 = particle_tile1.GetArrayOfStructs();
+      
+      {
+        Print() << std::endl;
+        Print() << particles1.numParticles();
+        Print() << std::endl;
+      }
+    }
+
+  
+    Print() << "________________ "<< "\n"<<"\n";
+    Print() << "particles checked once with Redistribute" << "\n";
+    Print() << "________________ " << "\n";
+
+
+        Print() << "________________ "<< "\n"<<"\n";
+    Print() << "After Redistribute Lev 0 " << "\n";
+    Print() << "________________ " << "\n";
+
+
+    PC1.Redistribute();
+    for (MFIter mfi(core.phi_new[0]); mfi.isValid(); ++mfi) {
+      auto& particle_tile1 = PC1.GetParticles(0)[std::make_pair(mfi.index(), 0)];
+      auto& particles1 = particle_tile1.GetArrayOfStructs();
+      
+      {
+        Print() << std::endl;
+        Print() << particles1.numParticles();
+        Print() << std::endl;
+      }
+    }
+
+
+
+
+      Print() << "________________ "<< "\n"<<"\n";
+    Print() << "After Redistribute Lev 1" << "\n";
+    Print() << "________________ " << "\n";
+
+
+
+
+
+     for (MFIter mfi(core.phi_new[1]); mfi.isValid(); ++mfi) {
+      auto& particle_tile1 = PC1.GetParticles(1)[std::make_pair(mfi.index(), 0)];
+      auto& particles1 = particle_tile1.GetArrayOfStructs();
+     
+      {
+        Print() << std::endl;
+        Print() << particles1.numParticles();
+        Print() << std::endl;
+      }
+    }
+
+
+    Print() << "________________ "<< "\n"<<"\n";
+    Print() << "After moving one particle out of refined region and redis" << "\n";
+    Print() << "________________ " << "\n";
+
+
+   
+
+{
+    auto& particle_tile1 = PC1.GetParticles(1)[std::make_pair(0,0)];
+    auto& particles1 = particle_tile1.GetArrayOfStructs();
+
+{
+        Print() << std::endl;
+        particles1[0].pos(0)=7.5;
+        particles1[0].pos(1)=0.5;
+        Print() << std::endl;
+      }
+
+
+}
+
+ PC1.Redistribute();
+
+
+  Print() << "________________ "<< "\n"<<"\n";
+    Print() << "After Redistribute Lev 0 " << "\n";
+    Print() << "________________ " << "\n";
+
+
+for (MFIter mfi(core.phi_new[0]); mfi.isValid(); ++mfi) {
+      auto& particle_tile1 = PC1.GetParticles(0)[std::make_pair(mfi.index(), 0)];
+      auto& particles1 = particle_tile1.GetArrayOfStructs();
+     
+      {
+        Print() << std::endl;
+        Print() << particles1.numParticles();
+        Print() << std::endl;
+      }
+    }
+
+
+     Print() << "________________ "<< "\n"<<"\n";
+    Print() << "After Redistribute Lev 1 " << "\n";
+    Print() << "________________ " << "\n";
+
+ for (MFIter mfi(core.phi_new[1]); mfi.isValid(); ++mfi) {
+      auto& particle_tile1 = PC1.GetParticles(1)[std::make_pair(mfi.index(), 0)];
+      auto& particles1 = particle_tile1.GetArrayOfStructs();
+     
+      {
+        Print() << std::endl;
+        Print() << particles1.numParticles();
+        Print() << std::endl;
+      }
+    }
+
+
+
+
     //////////////////////////////////////////////////////////
     // // Print()<<aa[1];
     // //  Best practice: you are encouraged to find useful information from AMREX
@@ -186,7 +345,7 @@ int main(int argc, char *argv[])
     //   const auto lo = lbound(bx);
     //   const auto hi = ubound(bx);
     //   for (int k = lo.z; k <= hi.z; ++k) {
-    //     for (int j = lo.x; j <= hi.x; ++j) {
+    //     for (int j = lo.y; j <= hi.y; ++j) {
     //       for (int i = lo.x; i <= hi.x; ++i) {
     //         tnp = tnp + 1;
     //         Particle<1, 0> p;

@@ -41,7 +41,7 @@ void AmrCoreAdv::MakeNewLevelFromScratch(int lev, Real time, const BoxArray &ba,
                 for (int i = lo.x; i <= hi.x; ++i)
                 {
                     Real x = problo[0] + (0.5 + i) * dx[0];
-                    Real r2 = (std::pow(x - 0.75, 2) + std::pow((y - 0.5), 2)) / 0.01;
+                    Real r2 = (std::pow(x - 4, 2) + std::pow((y - 4), 2)) / 1;
                     fab(i, j, k) = 1.0 + std::exp(-r2);
                 }
             }
@@ -197,6 +197,8 @@ void AmrCoreAdv::FillPatch(int lev, Real time, MultiFab &mf, int icomp, int ncom
         
         Vector<MultiFab *> cmf, fmf;
         Vector<Real> ctime, ftime;
+        ctime.push_back(0.0);
+        ftime.push_back(0.0);
         cmf.push_back(&phi_new[0]);
         fmf.push_back(&phi_new[1]);
         ctime.push_back(0.0);
