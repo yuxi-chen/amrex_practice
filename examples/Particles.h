@@ -28,11 +28,19 @@ public:
   using amrex::AmrParticleContainer<NStructReal, NStructInt>::GetParticles;
   using amrex::AmrParticleContainer<NStructReal, NStructInt>::MakeMFIter;
   using amrex::AmrParticleContainer<NStructReal, NStructInt>::Redistribute;
+  using amrex::AmrParticleContainer<NStructReal, NStructInt>::maxLevel;
   using amrex::AmrParticleContainer<NStructReal,
                                     NStructInt>::NumberOfParticlesAtLevel;
 
   Particles(amrex::AmrCore* amrcore)
-      : amrex::AmrParticleContainer<NStructReal, NStructInt>(amrcore){};
+      : amrex::AmrParticleContainer<NStructReal, NStructInt>(amrcore) {
+    do_tiling = true;
+    for (int idim = 0; idim < AMREX_SPACEDIM; ++idim) {
+      tile_size[idim] = 1;
+    }
+  };
+
+  void init_particles();
 };
 
 #endif

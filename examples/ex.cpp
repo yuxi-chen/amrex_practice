@@ -46,6 +46,8 @@ int main(int argc, char *argv[]) {
                               // grids too and then calls
   // MakeNewLevelFromScratch -   and  ErrorEst both are located in amrcoreadv
   // core.WritePlotFile();
+
+  core.init_particles();
   core.AverageDown();
   amrex::Real dt = 0.1;
   {

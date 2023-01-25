@@ -16,7 +16,8 @@ AmrCoreAdv::AmrCoreAdv() {
 }
 
 AmrCoreAdv::~AmrCoreAdv() {}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
 void AmrCoreAdv::MakeNewLevelFromScratch(int lev, Real time, const BoxArray &ba,
                                          const DistributionMapping &dm) {
   const int ncomp = 1;
