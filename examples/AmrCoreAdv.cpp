@@ -10,9 +10,6 @@
 using namespace amrex;
 AmrCoreAdv::AmrCoreAdv() {
   nSpecies = 1;
-  for (int i = 0; i < nSpecies; i++) {
-    pts.push_back(Particles(this));
-  }
 }
 
 AmrCoreAdv::~AmrCoreAdv() {}

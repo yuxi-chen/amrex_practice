@@ -10,6 +10,7 @@ void Particles<NStructReal, NStructInt>::init_particles() {
     printf("lev=%d\n", lev);
     for (MFIter mfi = MakeMFIter(lev, false); mfi.isValid(); ++mfi) {
       const Box& tile_box = mfi.validbox();
+      Print() << "box = " << tile_box << std::endl;
       const auto lo = amrex::lbound(tile_box);
       const auto hi = amrex::ubound(tile_box);
 
@@ -19,7 +20,7 @@ void Particles<NStructReal, NStructInt>::init_particles() {
       for (int i = iMin; i <= iMax; ++i)
         for (int j = jMin; j <= jMax; ++j)
           for (int k = kMin; k <= kMax; ++k) {
-            printf("i");
+            // printf("i=%d,j=%d,k=%d\n",i,j,k);
           }
     }
   }

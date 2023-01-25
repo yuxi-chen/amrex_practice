@@ -46,6 +46,10 @@ public:
                         int ngrow) override;
 
   void init_particles() {
+    for (int i = 0; i < nSpecies; i++) {
+      pts.push_back(Particles(this));
+    }
+
     for (auto &pt : pts)
       pt.init_particles();
   }
