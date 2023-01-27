@@ -223,6 +223,56 @@ for (MFIter mfi(core.phi_new[0]); mfi.isValid(); ++mfi) {
 
 
 
+     Print() << "________________ "<< "\n"<<"\n";
+    Print() << "Use MakeMFIter to initiate particles " << "\n";
+    Print() << "________________ " << "\n";
+
+   AmrParticleContainer<1, 0> PC2(&core);
+
+auto& particle_tilesss1 = PC2.GetParticles(0); //[std::make_pair(grid_id,tile_id)];  - This is as Vec ParticleLevel
+   tnp = 0; // - This is a ParticleTile
+    for (MFIter mfi=PC2.MakeMFIter(0); mfi.isValid(); ++mfi)
+     {
+      auto& particle_tile1 =particle_tilesss1[std::make_pair(mfi.index(), 0)];
+      const Box& bx = mfi.validbox();
+      FArrayBox& fab = core.phi_new[0][mfi];
+      Array4<Real> const& a = fab.array();
+      const auto lo = lbound(bx);
+      const auto hi = ubound(bx);
+      for (int k = lo.z; k <= hi.z; ++k) {
+        for (int j = lo.y; j <= hi.y; ++j) {
+          for (int i = lo.x; i <= hi.x; ++i) {
+            tnp = tnp + 1;
+            Particle<1, 0> p;
+            p.id() = tnp;
+            p.cpu() = ParallelDescriptor::MyProc();
+            p.pos(0) = i + 0.5;
+            p.pos(1) = j + 0.5;
+            p.pos(2) = 0;
+            particle_tile1.push_back(p);
+            Print() << "particle = " << p << "\n";
+          }
+        }
+      }
+    }
+
+
+
+
+     Print() << "________________ "<< "\n"<<"\n";
+    Print() << "Using ParIter to access particles " << "\n";
+    Print() << "________________ " << "\n";
+
+ for (ParIter pti(PC1,0); pti.isValid(); ++pti) {
+      
+      auto& particles = pti.GetArrayOfStructs();
+     
+      {
+        Print() << std::endl;
+        Print() << particles.numParticles();
+        Print() << std::endl;
+      }
+    }
 
     //////////////////////////////////////////////////////////
     // // Print()<<aa[1];
