@@ -26,9 +26,9 @@ state_error (int i, int j, int k,
     amrex::ParmParse pp; 
    pp.query("tag", tagn);
 
-       if(i>=3&&i<=4)
+       if(i>=1&&i<=4)
        {
-        if(j>=3&&j<=4)
+        if(j>=1&&j<=4)
         {
 
          

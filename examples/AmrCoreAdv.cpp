@@ -55,9 +55,7 @@ void AmrCoreAdv::ErrorEst(int lev, amrex::TagBoxArray &tags, amrex::Real time, i
     pp.getarr("phierr", phierr);
     const int tagval = TagBox::SET;
     const MultiFab &state = phi_new[lev];
-#ifdef AMREX_USE_OMP
-#pragma omp parallel if (Gpu::notInLaunchRegion())
-#endif
+
     {
         for (MFIter mfi(state); mfi.isValid(); ++mfi)
         {
